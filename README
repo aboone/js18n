@@ -1,0 +1,4 @@
+js18n - JavaScript Internationalization Framework
+
+A simple JS library which allows for client-side i18n of web pages.  Includes
+a script which converts standard properties files into JSONP-friendly format.

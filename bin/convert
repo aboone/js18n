@@ -1,0 +1,60 @@
+#!/usr/bin/perl
+
+my $BUNDLE_DIR = "bundles";
+my $DEFAULT_LOCALE = "en";
+
+my $tmpl = <<'EOF';
+/* This is a generated file, don't edit it! */
+var bundle = {
+	name : "%%NAME%%",
+	locale : "%%LOCALE%%",
+	data : {}
+};
+%%DATA%%
+if (typeof js18n == 'object') {
+	js18n.bundleLoaded(bundle);
+}
+EOF
+
+my $file;
+
+while ($file = shift) {
+	if (! -f $file) {
+		print STDERR "Skipping $file (File does not exist!)\n";
+	} else {
+		my ($bundle, $locale) = ($file =~ /(?:.*\/)?(.*?)(?:_([a-z]{2}))?.properties/);
+		if ($bundle) {
+			if (!$locale) {
+				$locale = $DEFAULT_LOCALE;
+			}
+
+			my $data = "";
+			open (IN, $file);
+			while (<IN>) {
+				my ($key, $val) = /^\s*([^\s]+)\s*=\s*(.*)[\s\r\n]*?$/;
+				if ($key && $val) {
+					$val =~ s/'/\\'/;
+					$val =~ s/[\n\r]//g;
+					$data .= "bundle.data['$key'] = '$val';\n";
+				}
+			}
+			close(IN);
+
+			my $outfile = "${BUNDLE_DIR}/${bundle}_${locale}.js";
+
+			print "Writing to $outfile\n";
+			open (OUT, "> $outfile");
+
+			$js = $tmpl;
+			$js =~ s/%%NAME%%/$bundle/;
+			$js =~ s/%%LOCALE%%/$locale/;
+			$js =~ s/%%DATA%%/$data/;
+	
+			print OUT $js;
+
+			close(OUT);
+		} else {
+			print STDERR "Skipping $file".' (Filename must be of the format ${NAME}_${LOCALE}.properties!)'."\n";
+		}
+	}
+}
