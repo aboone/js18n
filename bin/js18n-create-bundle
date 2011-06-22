@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 
-my $BUNDLE_DIR = "bundles";
+my $BUNDLE_DIR = "./bundles";
 my $DEFAULT_LOCALE = "en";
+my $COMMENT = "This is a generated file, don't edit it!";
 
 my $tmpl = <<'EOF';
-/* This is a generated file, don't edit it! */
 var bundle = {
 	name : "%%NAME%%",
 	locale : "%%LOCALE%%",
@@ -17,6 +17,11 @@ if (typeof js18n == 'object') {
 EOF
 
 my $file;
+
+if ($#ARGV == -1) {
+	print STDERR "Usage: $0 PROPERTY_FILE [PROPERTY_FILE_2 ... N]\n";
+	exit 1
+}
 
 while ($file = shift) {
 	if (! -f $file) {
@@ -40,10 +45,19 @@ while ($file = shift) {
 			}
 			close(IN);
 
+			if (! -d $BUNDLE_DIR) {
+				print STDERR "Output directory $BUNDLE_DIR does not exist! Create it before re-running.\n";
+				exit 1;
+			}
+
 			my $outfile = "${BUNDLE_DIR}/${bundle}_${locale}.js";
 
 			print "Writing to $outfile\n";
 			open (OUT, "> $outfile");
+
+			if ($COMMENT) {
+				print OUT "/* $COMMENT */";
+			}
 
 			$js = $tmpl;
 			$js =~ s/%%NAME%%/$bundle/;
