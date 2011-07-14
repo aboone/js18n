@@ -99,7 +99,7 @@ js18n = function(config) {
 				if (root.nodeValue && root.nodeValue.replace(/(^\s+|\s+$)/g, '')) {
 					textNodes.push(root);
 				}
-			} else if (root && root.childNodes) {
+			} else if (root && root.childNodes && root.nodeName != 'SCRIPT') {
 				var nodes = root.childNodes;
 				for (var i=0; i<nodes.length; i++) {
 					textNodes = textNodes.concat( this.findTextNodes(nodes[i]) );
