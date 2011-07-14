@@ -150,6 +150,19 @@ js18n = function(config) {
 			scr.setAttribute('src', this.getBundleUrl(bundleName));
 			document.body.appendChild(scr);
 		},
+		merge : function() {
+			var out = [];
+			for (var i=0; i<arguments.length; i++) {
+				if (typeof Array.concat == 'function') {
+					out = Array.concat(out, arguments[i]);
+				} else {
+					for (var j=0; j<arguments[i].length; j++) {
+						out.push( arguments[i][j] );
+					}
+				}
+			}
+			return out;
+		},
 		parseBundleName : function(bundleName) {
 			var parts = bundleName.split('_');
 			return {name: parts[0], locale: parts[1]};
@@ -196,8 +209,7 @@ js18n = function(config) {
 			if (srcLocale == destLocale) {
 				cb();
 			} else {
-
-				var bundles = Array.concat(src.getBundles(), dest.getBundles());
+				var bundles = privateUtils.merge(src.getBundles(), dest.getBundles());
 				
 				var that = this;
 				this.load(bundles, function() {
