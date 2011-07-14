@@ -163,6 +163,11 @@ js18n = function(config) {
 			}
 			return out;
 		},
+		normalizeTerm : function(term) {
+			term = term.replace(/(^\s+|\s+$)/g, ''); 	// trim it
+			term = term.replace(/\s+/g, ' ');		// replace spaces with a single space
+			return term;
+		},
 		parseBundleName : function(bundleName) {
 			var parts = bundleName.split('_');
 			return {name: parts[0], locale: parts[1]};
@@ -228,7 +233,7 @@ js18n = function(config) {
 			}
 		},
 		convertTerm : function(term, srcMessageSource, destMessageSource) {
-			var key = srcMessageSource.findKey(term.replace(/(^\s+|\s+$)/g, ''));
+			var key = srcMessageSource.findKey(privateUtils.normalizeTerm(term));
 			if (key) {
 				return destMessageSource.getString(key, false);
 			}
