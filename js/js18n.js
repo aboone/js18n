@@ -89,7 +89,6 @@ js18n = function(config) {
 			}
 		};
 	}
-	MS = MessageSource;
 
 	var privateUtils = {
 		findTextNodes : function(root) {
