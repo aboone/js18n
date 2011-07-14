@@ -228,6 +228,20 @@ js18n = function(config) {
 						}
 					}
 
+					// also convert submit buttons since they don't have a text node
+					var inputs = root.getElementsByTagName('input');
+					for (var i=0; i<inputs.length; i++) {
+						if (inputs[i].type && inputs[i].type == 'submit') {
+							var val = inputs[i].getAttribute('value');
+							if (val) {
+								var trVal = that.convertTerm(val, src, dest);
+								if (trVal) {
+									inputs[i].setAttribute('value', trVal);
+								}
+							}
+						}
+					}
+
 					cb();
 				});
 			}
