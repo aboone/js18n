@@ -27,7 +27,7 @@ while ($file = shift) {
 	if (! -f $file) {
 		print STDERR "Skipping $file (File does not exist!)\n";
 	} else {
-		my ($bundle, $locale) = ($file =~ /(?:.*\/)?(.*?)(?:_([a-z]{2}))?.properties/);
+		my ($bundle, $locale) = ($file =~ /(?:.*\/)?(.*?)(?:_([a-z]{2}(?:_[A-Z]{2})?))?.properties/);
 		if ($bundle) {
 			if (!$locale) {
 				$locale = $DEFAULT_LOCALE;
