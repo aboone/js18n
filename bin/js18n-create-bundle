@@ -5,14 +5,14 @@ my $DEFAULT_LOCALE = "en";
 my $COMMENT = "This is a generated file, don't edit it!";
 
 my $tmpl = <<'EOF';
-var bundle = {
+var %%BUNDLE_NAME%% = {
 	name : "%%NAME%%",
 	locale : "%%LOCALE%%",
 	data : {}
 };
 %%DATA%%
 if (typeof js18n == 'object') {
-	js18n.bundleLoaded(bundle);
+	js18n.bundleLoaded(%%BUNDLE_NAME%%);
 }
 EOF
 
@@ -33,6 +33,8 @@ while ($file = shift) {
 				$locale = $DEFAULT_LOCALE;
 			}
 
+			my $bundle_name = "${bundle}_${locale}";
+
 			my $data = "";
 			open (IN, $file);
 			while (<IN>) {
@@ -40,7 +42,7 @@ while ($file = shift) {
 				if ($key && $val) {
 					$val =~ s/'/\\'/;
 					$val =~ s/[\n\r]//g;
-					$data .= "bundle.data['$key'] = '$val';\n";
+					$data .= "$bundle_name.data['$key'] = '$val';\n";
 				}
 			}
 			close(IN);
@@ -50,16 +52,17 @@ while ($file = shift) {
 				exit 1;
 			}
 
-			my $outfile = "${BUNDLE_DIR}/${bundle}_${locale}.js";
+			my $outfile = "${BUNDLE_DIR}/$bundle_name.js";
 
 			print "Writing to $outfile\n";
 			open (OUT, "> $outfile");
 
 			if ($COMMENT) {
-				print OUT "/* $COMMENT */";
+				print OUT "/* $COMMENT */\n";
 			}
 
 			$js = $tmpl;
+			$js =~ s/%%BUNDLE_NAME%%/$bundle_name/g;
 			$js =~ s/%%NAME%%/$bundle/;
 			$js =~ s/%%LOCALE%%/$locale/;
 			$js =~ s/%%DATA%%/$data/;
