@@ -35,7 +35,7 @@ while ($file = shift) {
 			while (<IN>) {
 				my ($key, $val) = /^\s*([^\s]+)\s*=\s*(.*)[\s\r\n]*?$/;
 				if ($key && $val) {
-					$val =~ s/'/\\'/;
+					$val =~ s/'/\\'/g;
 					$val =~ s/[\n\r]//g;
 					$data .= "d['$key']='$val';\n";
 				}
